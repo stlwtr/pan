@@ -2,7 +2,7 @@ package file
 
 import (
 	"bytes"
-	"github.com/jsyzchen/pan/utils/httpclient"
+	"github.com/stlwtr/pan/utils/httpclient"
 	"io"
 	"io/ioutil"
 	"log"
@@ -13,14 +13,14 @@ import (
 )
 
 type Uploader struct {
-	Url string
+	Url      string
 	FilePath string
 }
 
-//NewFileUploader
+// NewFileUploader
 func NewFileUploader(url, filePath string) *Uploader {
 	return &Uploader{
-		Url: url,
+		Url:      url,
 		FilePath: filePath,
 	}
 }
@@ -83,7 +83,7 @@ func (u *Uploader) Upload() ([]byte, error) {
 	return respBody, nil
 }
 
-//直接通过字节上传
+// 直接通过字节上传
 func (u *Uploader) UploadByByte(fileByte []byte) ([]byte, error) {
 	ret := []byte("")
 

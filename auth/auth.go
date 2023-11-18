@@ -1,59 +1,59 @@
-//百度授权相关，wiki地址 https://openauth.baidu.com/doc/doc.html
+// 百度授权相关，wiki地址 https://openauth.baidu.com/doc/doc.html
 package auth
 
 import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/jsyzchen/pan/conf"
-	"github.com/jsyzchen/pan/utils/httpclient"
+	"github.com/stlwtr/pan/conf"
+	"github.com/stlwtr/pan/utils/httpclient"
 	"log"
 	"net/url"
 )
 
 type Auth struct {
-	ClientID string
+	ClientID     string
 	ClientSecret string
 }
 
 type AccessTokenResponse struct {
-	AccessToken string `json:"access_token"`
-	ExpiresIn int `json:"expires_in"`
-	RefreshToken string `json:"refresh_token"`
-	Scope string `json:"scope"`
-	SessionKey string `json:"session_key"`
-	SessionSecret string `json:"session_secret"`
-	Error string `json:"error"`
+	AccessToken      string `json:"access_token"`
+	ExpiresIn        int    `json:"expires_in"`
+	RefreshToken     string `json:"refresh_token"`
+	Scope            string `json:"scope"`
+	SessionKey       string `json:"session_key"`
+	SessionSecret    string `json:"session_secret"`
+	Error            string `json:"error"`
 	ErrorDescription string `json:"error_description"`
 }
 
 type RefreshTokenResponse struct {
-	AccessToken string `json:"access_token"`
-	ExpiresIn int `json:"expires_in"`
-	RefreshToken string `json:"refresh_token"`
-	Scope string `json:"scope"`
-	SessionKey string `json:"session_key"`
-	SessionSecret string `json:"session_secret"`
-	Error string `json:"error"`
+	AccessToken      string `json:"access_token"`
+	ExpiresIn        int    `json:"expires_in"`
+	RefreshToken     string `json:"refresh_token"`
+	Scope            string `json:"scope"`
+	SessionKey       string `json:"session_key"`
+	SessionSecret    string `json:"session_secret"`
+	Error            string `json:"error"`
 	ErrorDescription string `json:"error_description"`
 }
 
 type UserInfoResponse struct {
-	OpenID string `json:"openid"`
-	UnionID string `json:"unionid"` // 百度用户统一标识，对当前开发者帐号唯一
-	UserID string `json:"userid"` // 老版百度用户的唯一标识，后续不在返回该字段，user_id字段对应account.UserInfo方法返回的uk
-	UserName string `json:"username"`
-	SecureMobile int `json:"securemobile"` // 当前用户绑定手机号，需要向百度开放平台单独申请权限
-	Portrait string `json:"portrait"`
-	UserDetail string `json:"userdetail"`
-	Birthday string `json:"birthday"`
-	Marriage string `json:"marriage"`
-	Sex string `json:"sex"`
-	Blood string `json:"blood"`
+	OpenID       string `json:"openid"`
+	UnionID      string `json:"unionid"` // 百度用户统一标识，对当前开发者帐号唯一
+	UserID       string `json:"userid"`  // 老版百度用户的唯一标识，后续不在返回该字段，user_id字段对应account.UserInfo方法返回的uk
+	UserName     string `json:"username"`
+	SecureMobile int    `json:"securemobile"` // 当前用户绑定手机号，需要向百度开放平台单独申请权限
+	Portrait     string `json:"portrait"`
+	UserDetail   string `json:"userdetail"`
+	Birthday     string `json:"birthday"`
+	Marriage     string `json:"marriage"`
+	Sex          string `json:"sex"`
+	Blood        string `json:"blood"`
 	IsBindMobile string `json:"is_bind_mobile"`
-	IsRealName string `json:"is_realname"`
-	ErrorCode int  	 `json:"errno"`
-	ErrorMsg  string `json:"errmsg"`
+	IsRealName   string `json:"is_realname"`
+	ErrorCode    int    `json:"errno"`
+	ErrorMsg     string `json:"errmsg"`
 }
 
 const OAuthUri = "/oauth/2.0/authorize"
@@ -62,7 +62,7 @@ const UserInfoUri = "/rest/2.0/passport/users/getInfo"
 
 func NewAuthClient(clientID string, clientSecret string) *Auth {
 	return &Auth{
-		ClientID: clientID,
+		ClientID:     clientID,
 		ClientSecret: clientSecret,
 	}
 }
@@ -112,7 +112,7 @@ func (a *Auth) AccessToken(code, redirectUri string) (AccessTokenResponse, error
 		return ret, err
 	}
 
-	if ret.Error != "" {//有错误
+	if ret.Error != "" { //有错误
 		return ret, errors.New(ret.ErrorDescription)
 	}
 
@@ -146,7 +146,7 @@ func (a *Auth) RefreshToken(refreshToken string) (RefreshTokenResponse, error) {
 		return ret, err
 	}
 
-	if ret.Error != "" {//有错误
+	if ret.Error != "" { //有错误
 		return ret, errors.New(ret.ErrorDescription)
 	}
 
@@ -160,7 +160,7 @@ func (a *Auth) UserInfo(accessToken string) (UserInfoResponse, error) {
 
 	v := url.Values{}
 	v.Add("access_token", accessToken)
-	v.Add("get_unionid", "1")//需要获取unionid时，传递get_unionid = 1
+	v.Add("get_unionid", "1") //需要获取unionid时，传递get_unionid = 1
 	query := v.Encode()
 
 	requestUrl := conf.BaiduOpenApiDomain + UserInfoUri + "?" + query
@@ -179,7 +179,7 @@ func (a *Auth) UserInfo(accessToken string) (UserInfoResponse, error) {
 		return ret, err
 	}
 
-	if ret.ErrorCode != 0 {//有错误
+	if ret.ErrorCode != 0 { //有错误
 		return ret, errors.New(ret.ErrorMsg)
 	}
 

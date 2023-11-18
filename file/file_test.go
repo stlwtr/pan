@@ -1,7 +1,7 @@
 package file
 
 import (
-	"github.com/jsyzchen/pan/conf"
+	"github.com/stlwtr/pan/conf"
 	"testing"
 )
 
@@ -31,4 +31,3 @@ func TestFile_Streaming(t *testing.T) {
 	}
 	t.Logf("TestFile_Streaming res: %+v", res)
 }
-

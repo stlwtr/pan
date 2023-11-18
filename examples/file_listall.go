@@ -12,7 +12,7 @@ const (
 func main() {
 	accessToken := MyAccessToken
 	fileClient := file.NewFileClient(accessToken)
-	res, err := fileClient.List("/apps/bypy", 0, 100)
+	res, err := fileClient.Listall("/apps/bypy", 0, 0, 100)
 	if err != nil {
 		fmt.Println("err:", err)
 		return

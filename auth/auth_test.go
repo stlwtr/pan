@@ -1,7 +1,7 @@
 package auth
 
 import (
-	"github.com/jsyzchen/pan/conf"
+	"github.com/stlwtr/pan/conf"
 	"testing"
 )
 

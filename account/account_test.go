@@ -1,7 +1,7 @@
 package account
 
 import (
-	"github.com/jsyzchen/pan/conf"
+	"github.com/stlwtr/pan/conf"
 	"testing"
 )
 

@@ -2,20 +2,20 @@ package file
 
 import (
 	"errors"
-	"github.com/jsyzchen/pan/account"
-	"github.com/jsyzchen/pan/conf"
-	"github.com/jsyzchen/pan/utils/file"
+	"github.com/stlwtr/pan/account"
+	"github.com/stlwtr/pan/conf"
+	"github.com/stlwtr/pan/utils/file"
 	"log"
 	"net/url"
 )
 
 type Downloader struct {
 	LocalFilePath string
-	DownloadLink string
-	FsID uint64
-	Path string
-	AccessToken string
-	TotalPart int
+	DownloadLink  string
+	FsID          uint64
+	Path          string
+	AccessToken   string
+	TotalPart     int
 }
 
 const (
@@ -24,16 +24,16 @@ const (
 
 func NewDownloader(accessToken string, downloadLink string, localFilePath string) *Downloader {
 	return &Downloader{
-		AccessToken: accessToken,
+		AccessToken:   accessToken,
 		LocalFilePath: localFilePath,
-		DownloadLink: downloadLink,
+		DownloadLink:  downloadLink,
 	}
 }
 
 func NewDownloaderWithFsID(accessToken string, fsID uint64, localFilePath string) *Downloader {
 	return &Downloader{
-		AccessToken: accessToken,
-		FsID: fsID,
+		AccessToken:   accessToken,
+		FsID:          fsID,
 		LocalFilePath: localFilePath,
 	}
 }
@@ -41,8 +41,8 @@ func NewDownloaderWithFsID(accessToken string, fsID uint64, localFilePath string
 // 非开放平台公开接口，生产环境谨慎使用
 func NewDownloaderWithPath(accessToken string, path string, localFilePath string) *Downloader {
 	return &Downloader{
-		AccessToken: accessToken,
-		Path: path,
+		AccessToken:   accessToken,
+		Path:          path,
 		LocalFilePath: localFilePath,
 	}
 }
@@ -54,7 +54,7 @@ func (d *Downloader) Download() error {
 		return errors.New("param error, localFilePath is empty")
 	}
 
-	if d.DownloadLink != "" {//直接下载
+	if d.DownloadLink != "" { //直接下载
 		downloadLink = d.DownloadLink
 	} else if d.FsID != 0 {
 		// 根据fsID获取下载链接
@@ -91,7 +91,7 @@ func (d *Downloader) Download() error {
 		log.Println("VipType:", userInfo.VipType)
 		if userInfo.VipType == 2 { //当前用户是超级会员
 			downloader.SetPartSize(52428800) //设置每分片下载文件大小，50M
-			downloader.SetCoroutineNum(10) //分片下载并发数，普通用户不支持并发分片下载
+			downloader.SetCoroutineNum(10)   //分片下载并发数，普通用户不支持并发分片下载
 		}
 	}
 
@@ -102,5 +102,3 @@ func (d *Downloader) Download() error {
 
 	return nil
 }
-
-
