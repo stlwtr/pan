@@ -4,11 +4,12 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/stlwtr/pan/conf"
-	"github.com/stlwtr/pan/utils/httpclient"
 	"log"
 	"net/url"
 	"strconv"
+
+	"github.com/stlwtr/pan/conf"
+	"github.com/stlwtr/pan/utils/httpclient"
 )
 
 const (
@@ -54,6 +55,14 @@ type ListallResponse struct {
 		ServerCtime    int               `json:"server_ctime"`
 		ServerMtime    int               `json:"server_mtime"`
 	}
+}
+
+func (v ListallResponse) MarshalJSON() ([]byte, error) {
+	return json.Marshal(v)
+}
+
+func (v *ListallResponse) UnmarshalJSON(src []byte) error {
+	return json.Unmarshal(src, &v)
 }
 
 type MetasResponse struct {
