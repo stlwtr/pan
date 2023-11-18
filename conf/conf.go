@@ -9,7 +9,7 @@ type PcsResponseBase struct {
 type ListallResponse struct {
 	ErrorCode int    `json:"errno"`
 	ErrorMsg  string `json:"errmsg"`
-	RequestID uint64 `json:"request_id"`
+	RequestID string `json:"request_id"`
 	Cursor    uint64 `json:"cursor"`
 	Hasmore   int    `json:"has_more"`
 }
