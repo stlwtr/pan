@@ -57,14 +57,6 @@ type ListallResponse struct {
 	}
 }
 
-func (v ListallResponse) MarshalJSON() ([]byte, error) {
-	return json.Marshal(v)
-}
-
-func (v *ListallResponse) UnmarshalJSON(src []byte) error {
-	return json.Unmarshal(src, &v)
-}
-
 type MetasResponse struct {
 	ErrorCode    int    `json:"errno"`
 	ErrorMsg     string `json:"errmsg"`
