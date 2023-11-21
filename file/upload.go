@@ -3,15 +3,8 @@ package file
 import (
 	"crypto/md5"
 	"encoding/hex"
-	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/bitly/go-simplejson"
-	"github.com/stlwtr/pan/account"
-	"github.com/stlwtr/pan/conf"
-	fileUtil "github.com/stlwtr/pan/utils/file"
-	"github.com/stlwtr/pan/utils/httpclient"
-	"github.com/syyongx/php2go"
 	"io"
 	"log"
 	"math"
@@ -19,6 +12,14 @@ import (
 	"os"
 	"strconv"
 	"strings"
+
+	"github.com/bitly/go-simplejson"
+	"github.com/stlwtr/pan/account"
+	"github.com/stlwtr/pan/conf"
+	"github.com/stlwtr/pan/utils"
+	fileUtil "github.com/stlwtr/pan/utils/file"
+	"github.com/stlwtr/pan/utils/httpclient"
+	"github.com/syyongx/php2go"
 )
 
 type UploadResponse struct {
@@ -195,7 +196,7 @@ func (u *Uploader) PreCreate() (PreCreateResponse, error) {
 		log.Println("getBlockList failed, err:", err)
 		return ret, err
 	}
-	blockListByte, err := json.Marshal(blockList)
+	blockListByte, err := utils.MarshalJSON(blockList)
 	if err != nil {
 		return ret, err
 	}
@@ -233,8 +234,8 @@ func (u *Uploader) PreCreate() (PreCreateResponse, error) {
 		}
 	}
 
-	if err := json.Unmarshal(respBody, &ret); err != nil {
-		log.Println("json.Unmarshal failed, err:", err)
+	if err := utils.UnmarshalJSON(respBody, &ret); err != nil {
+		log.Println("utils.UnmarshalJSON failed, err:", err)
 		return ret, err
 	}
 
@@ -270,7 +271,7 @@ func (u *Uploader) SuperFile2Upload(uploadID string, partSeq int, partByte []byt
 		return ret, err
 	}
 
-	if err := json.Unmarshal(resp, &ret); err != nil {
+	if err := utils.UnmarshalJSON(resp, &ret); err != nil {
 		log.Printf("upload failed, path[%s] response[%s]", path, string(resp))
 		return ret, err
 	}
@@ -293,7 +294,7 @@ func (u *Uploader) Create(uploadID string, blockList []string) (UploadResponse, 
 		return ret, err
 	}
 
-	blockListByte, err := json.Marshal(blockList)
+	blockListByte, err := utils.MarshalJSON(blockList)
 	if err != nil {
 		return ret, err
 	}
@@ -318,8 +319,8 @@ func (u *Uploader) Create(uploadID string, blockList []string) (UploadResponse, 
 		return ret, err
 	}
 
-	if err := json.Unmarshal(resp.Body, &ret); err != nil {
-		log.Printf("json.Unmarshal failed, resp[%s], err[%v]", string(resp.Body), err)
+	if err := utils.UnmarshalJSON(resp.Body, &ret); err != nil {
+		log.Printf("utils.UnmarshalJSON failed, resp[%s], err[%v]", string(resp.Body), err)
 		return ret, err
 	}
 

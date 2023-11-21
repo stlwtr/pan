@@ -2,11 +2,12 @@ package file
 
 import (
 	"errors"
+	"log"
+	"net/url"
+
 	"github.com/stlwtr/pan/account"
 	"github.com/stlwtr/pan/conf"
 	"github.com/stlwtr/pan/utils/file"
-	"log"
-	"net/url"
 )
 
 type Downloader struct {
@@ -38,6 +39,15 @@ func NewDownloaderWithFsID(accessToken string, fsID uint64, localFilePath string
 	}
 }
 
+func NewDownloaderWithFsIDAndPath(accessToken string, fsID uint64, path string, localFilePath string) *Downloader {
+	return &Downloader{
+		AccessToken:   accessToken,
+		FsID:          fsID,
+		Path:          path,
+		LocalFilePath: localFilePath,
+	}
+}
+
 // 非开放平台公开接口，生产环境谨慎使用
 func NewDownloaderWithPath(accessToken string, path string, localFilePath string) *Downloader {
 	return &Downloader{
@@ -59,7 +69,11 @@ func (d *Downloader) Download() error {
 	} else if d.FsID != 0 {
 		// 根据fsID获取下载链接
 		fileClient := NewFileClient(d.AccessToken)
-		metas, err := fileClient.Metas([]uint64{d.FsID})
+		filePath := ""
+		if len(d.Path) > 0 {
+			filePath = d.Path
+		}
+		metas, err := fileClient.Metas([]uint64{d.FsID}, filePath)
 		if err != nil {
 			log.Println("fileClient.Metas failed, err:", err)
 			return err
@@ -84,6 +98,7 @@ func (d *Downloader) Download() error {
 	}
 
 	downloadLink += "&access_token=" + d.AccessToken
+	log.Println("downloadLink:", downloadLink)
 	downloader := file.NewFileDownloader(downloadLink, d.LocalFilePath)
 
 	accountClient := account.NewAccountClient(d.AccessToken)

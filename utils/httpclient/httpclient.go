@@ -21,7 +21,7 @@ func SendRequest(method string, url string, header map[string]string, body strin
 	var err error
 	if method == "POST" {
 		request, err = http.NewRequest(method, url, strings.NewReader(body))
-		request.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+		// request.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 	} else if method == "PUT" {
 		request, err = http.NewRequest(method, url, strings.NewReader(body))
 	} else {
@@ -49,6 +49,12 @@ func SendRequest(method string, url string, header map[string]string, body strin
 	}
 
 	defer response.Body.Close()
+	// contentEncoding, ok := response.Header["Content-Encoding"]
+	// if ok {
+	// 	switch contentEncoding {
+	// 		case ""
+	// 	}
+	// }
 	res.Body, err = ioutil.ReadAll(response.Body)
 	if err != nil {
 		return res, err
@@ -73,7 +79,7 @@ func Head(url string, header map[string]string) (HttpResponse, error) {
 }
 
 func Delete(url string, header map[string]string) (HttpResponse, error) {
-	return SendRequest("DELETE", url, header,"")
+	return SendRequest("DELETE", url, header, "")
 }
 
 // 随机获取User-Agent

@@ -1,7 +1,6 @@
 package file
 
 import (
-	"encoding/json"
 	"errors"
 	"fmt"
 	"log"
@@ -9,6 +8,7 @@ import (
 	"strconv"
 
 	"github.com/stlwtr/pan/conf"
+	"github.com/stlwtr/pan/utils"
 	"github.com/stlwtr/pan/utils/httpclient"
 )
 
@@ -121,7 +121,7 @@ func (f *File) List(dir string, start, limit int) (ListResponse, error) {
 		return ret, errors.New(fmt.Sprintf("HttpStatusCode is not equal to 200, httpStatusCode[%d], respBody[%s]", resp.StatusCode, string(resp.Body)))
 	}
 
-	if err := json.Unmarshal(resp.Body, &ret); err != nil {
+	if err := utils.UnmarshalJSON(resp.Body, &ret); err != nil {
 		return ret, err
 	}
 
@@ -166,7 +166,7 @@ func (f *File) Listall(path string, recursion, start, limit int) (ListallRespons
 		return ret, errors.New(fmt.Sprintf("HttpStatusCode is not equal to 200, httpStatusCode[%d], respBody[%s]", resp.StatusCode, string(resp.Body)))
 	}
 
-	if err := json.Unmarshal(resp.Body, &ret); err != nil {
+	if err := utils.UnmarshalJSON(resp.Body, &ret); err != nil {
 		return ret, err
 	}
 
@@ -178,10 +178,10 @@ func (f *File) Listall(path string, recursion, start, limit int) (ListallRespons
 }
 
 // 通过FsID获取文件信息
-func (f *File) Metas(fsIDs []uint64) (MetasResponse, error) {
+func (f *File) Metas(fsIDs []uint64, path string) (MetasResponse, error) {
 	ret := MetasResponse{}
 
-	fsIDsByte, err := json.Marshal(fsIDs)
+	fsIDsByte, err := utils.MarshalJSON(fsIDs)
 	if err != nil {
 		return ret, err
 	}
@@ -190,10 +190,13 @@ func (f *File) Metas(fsIDs []uint64) (MetasResponse, error) {
 	v.Add("access_token", f.AccessToken)
 	v.Add("fsids", string(fsIDsByte))
 	v.Add("dlink", "1")
+	if len(path) > 0 {
+		v.Add("path", path)
+	}
 	v.Add("thumb", "1")
 	v.Add("extra", "1")
 	query := v.Encode()
-
+	log.Println("query:", query)
 	requestUrl := conf.OpenApiDomain + MetasUri + "&" + query
 	resp, err := httpclient.Get(requestUrl, map[string]string{})
 	if err != nil {
@@ -205,7 +208,7 @@ func (f *File) Metas(fsIDs []uint64) (MetasResponse, error) {
 		return ret, errors.New(fmt.Sprintf("HttpStatusCode is not equal to 200, httpStatusCode[%d], respBody[%s]", resp.StatusCode, string(resp.Body)))
 	}
 
-	if err := json.Unmarshal(resp.Body, &ret); err != nil {
+	if err := utils.UnmarshalJSON(resp.Body, &ret); err != nil {
 		return ret, err
 	}
 
